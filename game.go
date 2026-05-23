@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"strings"
+	"math/rand"
 )
 
 type game struct {
 	board [][]string
+	snake []point
 }
 
 type point struct {
@@ -15,10 +15,24 @@ type point struct {
 }
 
 func NewGame() game {
-	// Methode 1: make + Loop (empfohlen, zusammenhängender Speicher)
 	matrix := createMatrix()
+	initialSnake := initSnakeArray()
+	game := game{matrix, initialSnake}
+	game.addSnakeToBoard(initialSnake)
 
-	return game{matrix}
+	return game
+
+}
+
+func initSnakeArray() []point {
+	x := rand.Intn(20) - 1
+	y := rand.Intn(20) - 1
+	snakeHead := point{
+		x,
+		y,
+	}
+	return []point{snakeHead}
+
 }
 
 func createMatrix() [][]string {
@@ -36,8 +50,13 @@ func createMatrix() [][]string {
 	return matrix
 }
 
-func (g *game) RenderBoard() {
-	for _, row := range g.board {
-		fmt.Println(strings.Join(row, ""))
+func (g *game) addSnakeToBoard(points []point) {
+	for _, point := range points {
+		g.board[point.x][point.y] = "o"
 	}
+
+}
+
+func (g *game) addPoint(p point) {
+
 }
