@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"golang.org/x/term"
 	"os"
 )
@@ -18,4 +19,33 @@ func main() {
 	// a manual cleanup is required
 	defer term.Restore(int(os.Stdin.Fd()), oldState)
 
+	input := make([]byte, 3)
+
+	for {
+		n, err := os.Stdin.Read(input)
+
+		if err != nil {
+			break
+		}
+		// q or ctr+c cancel game
+		if input[0] == 'q' || input[0] == 3 {
+			break
+		}
+
+		if n == 3 && input[0] == 0x1b && input[1] == '[' {
+			switch input[2] {
+			case 'A':
+				fmt.Println("up")
+
+			case 'B':
+				fmt.Println("down")
+
+			case 'C':
+				fmt.Println("right")
+
+			case 'D':
+				fmt.Println("left")
+			}
+		}
+	}
 }

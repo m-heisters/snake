@@ -1,9 +1,5 @@
 package main
 
-import (
-	"math/rand"
-)
-
 type game struct {
 	board [][]string
 	snake []point
@@ -16,22 +12,21 @@ type point struct {
 
 func NewGame() game {
 	matrix := createMatrix()
-	initialSnake := initSnakeArray()
-	game := game{matrix, initialSnake}
-	game.addSnakeToBoard(initialSnake)
+	snakeHead := initSnakeArray()
+	game := game{matrix, snakeHead}
+	game.addSnakeToMatrix(snakeHead)
 
 	return game
 
 }
 
 func initSnakeArray() []point {
-	x := rand.Intn(20) - 1
-	y := rand.Intn(20) - 1
-	snakeHead := point{
-		x,
-		y,
+	snake := []point{
+		point{9, 9},
+		point{9, 8},
+		point{9, 7},
 	}
-	return []point{snakeHead}
+	return snake
 
 }
 
@@ -50,13 +45,19 @@ func createMatrix() [][]string {
 	return matrix
 }
 
-func (g *game) addSnakeToBoard(points []point) {
-	for _, point := range points {
-		g.board[point.x][point.y] = "o"
+func (g *game) addSnakeToMatrix(snake []point) {
+	for i, point := range snake {
+		if i == 0 {
+			g.board[point.x][point.y] = "@"
+
+		} else {
+			g.board[point.x][point.y] = "o"
+		}
 	}
 
 }
 
 func (g *game) addPoint(p point) {
+	g.snake = append(g.snake, p)
 
 }
