@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang.org/x/term"
 	"os"
+	"time"
 )
 
 func main() {
@@ -19,33 +20,21 @@ func main() {
 	// a manual cleanup is required
 	defer term.Restore(int(os.Stdin.Fd()), oldState)
 
-	input := make([]byte, 3)
+	chDir := make(chan string, 1)
+	defer close(chDir)
 
 	for {
-		n, err := os.Stdin.Read(input)
-
+		err := readInput(chDir)
 		if err != nil {
+			term.Restore(int(os.Stdin.Fd()), oldState)
+		}
+		time.Sleep(time.Millisecond * 500)
+		input := <-chDir
+		if input == "quit" {
 			break
 		}
-		// q or ctr+c cancel game
-		if input[0] == 'q' || input[0] == 3 {
-			break
-		}
 
-		if n == 3 && input[0] == 0x1b && input[1] == '[' {
-			switch input[2] {
-			case 'A':
-				fmt.Println("up")
+		fmt.Printf("%s", input)
 
-			case 'B':
-				fmt.Println("down")
-
-			case 'C':
-				fmt.Println("right")
-
-			case 'D':
-				fmt.Println("left")
-			}
-		}
 	}
 }
